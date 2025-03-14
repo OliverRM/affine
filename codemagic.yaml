@@ -1,0 +1,61 @@
+workflows:
+  build-ios:
+    name: Build for App Store Connect
+    max_build_duration: 10
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        # Add the group environment variables in Codemagic UI (either in Application/Team variables)
+        # https://docs.codemagic.io/variables/environment-variable-groups/
+        - app_store # Includes APP_APPLE_ID
+      ios_signing:
+        distribution_type: app_store # or: ad_hoc | development | enterprise
+        bundle_identifier: de.oliverrm.affine
+      node: latest
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Install yarn dependencies
+        script: yarn install
+      - name: Build web app
+        script: BUILD_TYPE=canary PUBLIC_PATH="/" yarn affine @affine/ios build
+      - name: Update dependencies and copy web assets to native project
+        script: yarn affine @affine/ios cap sync
+      - name: Increment build number
+        script: |
+          #!/bin/sh
+          set -e
+          set -x
+
+          LATEST_APP_STORE_BUILD_NUMBER=$(app-store-connect get-latest-build-number $APP_APPLE_ID)
+          if [ -z LATEST_APP_STORE_BUILD_NUMBER ]; then
+            STORE_BUILD_NUMBER=1
+          else
+            STORE_BUILD_NUMBER=$(($LATEST_APP_STORE_BUILD_NUMBER + 1))
+          fi
+          echo "New build number: $STORE_BUILD_NUMBER"
+
+          cd $CM_BUILD_DIR/packages/frontend/apps/ios/App
+          agvtool new-version -all $STORE_BUILD_NUMBER
+          agvtool new-marketing-version 1.0.$STORE_BUILD_NUMBER
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles --project "packages/frontend/apps/ios/App/App.xcodeproj"
+      - name: Build ipa for distribution
+        script: xcode-project build-ipa --workspace "packages/frontend/apps/ios/App/App.xcworkspace" --scheme "App"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    # Integration section is required to make use of the keys stored in
+    # Codemagic UI under Apple Developer Portal integration.
+    integrations:
+      app_store_connect: Codemagic 2023
+    publishing:
+      app_store_connect:
+        # Use referenced App Store Connect API key to authenticate binary upload
+        auth: integration
+        # Optional boolean, defaults to false. Whether or not to submit the uploaded
+        # build to TestFlight beta review. Required for distributing to beta groups.
+        # Note: This action is performed during post-processing.
+        submit_to_testflight: true
