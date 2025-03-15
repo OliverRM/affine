@@ -38,6 +38,16 @@ workflows:
           cd $CM_BUILD_DIR/packages/frontend/apps/ios/App
           agvtool new-version -all $STORE_BUILD_NUMBER
           agvtool new-marketing-version 1.0.$STORE_BUILD_NUMBER
+      - name: Set up Rust targets
+        script: |
+          #!/bin/sh
+          set -e
+          set -x
+
+          . "$HOME/.cargo/env"
+          rustup target add aarch64-apple-ios
+          rustup target add aarch64-apple-ios-sim
+          rustup target add aarch64-apple-darwin
       - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles --project "packages/frontend/apps/ios/App/App.xcodeproj"
       - name: Build ipa for distribution
