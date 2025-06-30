@@ -57,6 +57,7 @@ export const KNOWN_CONFIG_GROUPS = [
     module: 'auth',
     fields: [
       'allowSignup',
+      'restrictLocalWorkspaces',
       // nested json object
       {
         key: 'passwordRequirements',

@@ -144,6 +144,11 @@
           "description": "Whether allow new registrations.\n@default true",
           "default": true
         },
+        "restrictLocalWorkspaces": {
+          "type": "boolean",
+          "description": "Whether to restrict the use of local workspaces to authenticated users.",
+          "default": false
+        },
         "requireEmailDomainVerification": {
           "type": "boolean",
           "description": "Whether require email domain record verification before accessing restricted resources.\n@default false",

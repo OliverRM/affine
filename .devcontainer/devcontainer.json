@@ -12,7 +12,10 @@
       "version": "lts",
       "installYarnUsingApt": false
     },
-    "ghcr.io/devcontainers/features/rust:1": {}
+    "ghcr.io/devcontainers/features/rust:1": {
+      "version": "1.64.0"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
   // Configure tool-specific properties.
   "customizations": {

@@ -4,6 +4,7 @@ import { defineModuleConfig } from '../../base';
 
 export interface ServerFlags {
   earlyAccessControl: boolean;
+  unauthorizedLocalWorkspaces: boolean;
 }
 
 declare global {
@@ -68,5 +69,9 @@ defineModuleConfig('flags', {
   earlyAccessControl: {
     desc: 'Only allow users with early access features to access the app',
     default: false,
+  },
+  unauthorizedLocalWorkspaces: {
+    desc: 'Allow users to create local workspaces without signing in',
+    default: true, // TODO: change the default value to false
   },
 });

@@ -8,6 +8,7 @@ export interface AuthConfig {
     ttr: number;
   };
   allowSignup: boolean;
+  restrictLocalWorkspaces: boolean;
   requireEmailDomainVerification: boolean;
   requireEmailVerification: boolean;
   passwordRequirements: ConfigItem<{
@@ -26,6 +27,10 @@ defineModuleConfig('auth', {
   allowSignup: {
     desc: 'Whether allow new registrations.',
     default: true,
+  },
+  restrictLocalWorkspaces: {
+    desc: 'Whether to restrict the use of local workspaces to authenticated users',
+    default: false, // TODO: enable this by default
   },
   requireEmailDomainVerification: {
     desc: 'Whether require email domain record verification before accessing restricted resources.',

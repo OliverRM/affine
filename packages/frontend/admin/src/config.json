@@ -63,6 +63,10 @@
       "type": "Boolean",
       "desc": "Whether allow new registrations."
     },
+    "restrictLocalWorkspaces": {
+      "type": "Boolean",
+      "desc": "Whether to restrict the use of local workspaces to authenticated users."
+    },
     "requireEmailDomainVerification": {
       "type": "Boolean",
       "desc": "Whether require email domain record verification before accessing restricted resources."
